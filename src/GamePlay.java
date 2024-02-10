@@ -165,7 +165,7 @@ public class GamePlay {
 
 		//マップの初期表示
 
-		this.printMap(this.squareContentList, currentPosition);
+		this.printMap2(this.squareContentList, currentPosition);
 
 		//行動ループ
 
@@ -211,9 +211,11 @@ public class GamePlay {
 
 				//マップを書く　移動後
 
-				this.printMap(this.squareContentList, currentPosition);
+				this.printMap2(this.squareContentList, currentPosition);
 
-				//イベント発生
+				//イベント発生1
+				
+				this.printEvent(this.squareContentList, currentPosition);
 
 				//現在位置マス数がゴールまでのマス数より大きい場合は
 				//ゴールしていると想定されるためイベント発生の処理をしない
@@ -262,8 +264,8 @@ public class GamePlay {
 
 					//マップを書く イベント発生後
 
-					this.printMap(this.squareContentList, currentPosition);
-					this.printEvent(this.squareContentList, currentPosition);
+					this.printMap2(this.squareContentList, currentPosition);
+				
 				}
 
 			}
@@ -361,116 +363,6 @@ public class GamePlay {
 
 }
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	private void printMap(List<String> contentList, int currentPos) {
-//		//スタートを出力
-//
-//		System.out.println("スタート" + "\n" + "|");
-//
-//		//スタートからゴールまでのマスとイベント内容を出力する
-//		for (int i = 0; i <  currentPos + 3; i++) {
-//			int loopCnt = i + 1; //ループ回数目
-//			String printSquare = ""; //1マス出力する内容
-//
-//			//マスの出力内容を分岐する
-//
-//			String squareKind = "〇"; //デフォルトのマスは〇で出力
-//
-//			//ループ回数が現在位置のマス目と同じか？
-//
-//			if (loopCnt == currentPos) {
-//				squareKind += "●"; //現在位置のマスは●で出力する
-//
-//			}
-//
-//			//イベント内容の出力
-//			//イベント内容をリストから取得
-//
-//			String eventContent = contentList.get(i);
-//
-//			//各マスに出力する内容を生成
-//			// 〇　イベント内容
-//			
-//			
-//			printSquare += squareKind + "    " + eventContent;
-//			printSquare += "\n" + "|";
-//
-//			System.out.println(printSquare);
-//			
-//		}
-//
-//		//ゴールの出力
-//		System.out.println("...");
-//
-//	}
-//	
-//	
-//	private void printMap2(List<String> contentList, int currentPos) {
-//		//スタートを出力
-//
-//		System.out.println("現在地" + "\n" + "|");
-//
-//		//現在地から５コマ先までのマスとイベント内容を出力する
-//		
-//		for (int i = 0;  i <  currentPos +3; i++) {
-//			int loopCnt = i + 1; //ループ回数目
-//			String printSquare = ""; //1マス出力する内容
-//
-//			//マスの出力内容を分岐する
-//
-//			String squareKind = "〇"; //デフォルトのマスは〇で出力
-//
-//			//ループ回数が現在位置のマス目と同じか？
-//			if(currentPos > i) {
-//				if (loopCnt == currentPos) {
-//					squareKind += "●"; //現在位置のマスは●で出力する
-//
-//				}
-//
-//			}else if(currentPos < i){
-//				
-//				continue;
-//			
-//				
-//			}
-//			
-//			
-//			
-//			//イベント内容の出力
-//			//イベント内容をリストから取得
-//
-//			String eventContent = contentList.get(i);
-//
-//			//各マスに出力する内容を生成
-//			// 〇　イベント内容
-//			
-//			
-//			printSquare += squareKind + "    " + eventContent;
-//			printSquare += "\n" + "|";
-//
-//			System.out.println(printSquare);
-//			
-//				
-//			
-//		
-//		
-//			
-//		}//System.out.println("ゴール!");
-//		
-//		
-//		
-//
-//	}
 
 	public int selectMoveOrStop(int c, int t) {
 		//選択要求メッセージ
@@ -577,5 +469,59 @@ public class GamePlay {
 
 		System.out.println(printEvent);
 	}
+	
+	private void printMap2(List<String> contentList, int currentPos) {
+	//スタートを出力
+
+	System.out.println("現在地" + "\n" + "|");
+
+	//スタートからゴールまでのマスとイベント内容を出力する
+	
+	//if(currentPos +3 <  contentList.size() ) {
+		int start = currentPos - 3 <=0?0:currentPos-3; 
+		int last = currentPos + 3 >= contentList.size()?contentList.size():currentPos+3; 
+		for (int i = start ; i <  last ; i++) {
+			int loopCnt = i + 1; //ループ回数目
+			String printSquare = ""; //1マス出力する内容
+	
+			//マスの出力内容を分岐する
+	
+			String squareKind = "〇"; //デフォルトのマスは〇で出力
+	
+			//ループ回数が現在位置のマス目と同じか？
+	
+			if (loopCnt == currentPos) {
+				squareKind += "●"; //現在位置のマスは●で出力する
+			
+			}
+		
+			//イベント内容の出力
+			//イベント内容をリストから取得
+	
+			String eventContent = contentList.get(i);
+	
+			//各マスに出力する内容を生成
+			// 〇　イベント内容
+			
+			
+			printSquare += squareKind + "    " + eventContent;
+			printSquare += "\n" + "|";
+	
+			System.out.println(printSquare);
+		}		
+			
+	//}else{
+		
+		
+	//}
+
+	//ゴールの出力
+	System.out.println("...");
+
+}
+	
+	
+	
+	
 
 }
