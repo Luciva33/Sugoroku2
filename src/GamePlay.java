@@ -4,8 +4,13 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class GamePlay {
+	Random rand = new Random();
 
 	//メンバ変数を追加
+	
+	
+	
+	
 
 	private List<String> squareContentList = new ArrayList<String>() {
 		{
@@ -17,7 +22,12 @@ public class GamePlay {
 			add("後ろ歩きしてみた。1マス戻る。");
 			add("なし。");
 			add("レンタカーを借りた。次は2倍進む。");
-			add("なぜかゴールに到着する。");
+			add("財布をおとした！2マス戻る。");
+			add("なし。");
+			add("なし。");
+			add("道案内をたのまれた。1マス戻る。");
+			add("病気になった...2回休み。");
+			add("ゴールへの近道をする！。");
 			add("用事を思い出した。3マス戻る。");
 		}
 	};
@@ -33,8 +43,13 @@ public class GamePlay {
 			add(0); // 6マス目：1マス戻る
 			add(0); // 7マス目：なし
 			add(0); // 8マス目：次は2倍進む
-			add(0); // 9マス目：ゴールに到着する
-			add(0); // 10マス目：3マス戻る	
+			add(0); // 9マス目: ２マス戻る1
+			add(0); // 10マス目：なし
+			add(0); // 11マス目：なし
+			add(0); // 12マス目: 1マス戻る
+			add(2); // 13マス目：1回休み
+			add(0); // 14マス目：ゴールに到着する
+			add(0); // 15マス目：3マス戻る	
 		}
 	};
 
@@ -49,6 +64,11 @@ public class GamePlay {
 			add(-1); // 1マス戻る
 			add(0); // なし
 			add(0); // 次は2倍進む
+			add(-2);//	2マスもどる
+			add(0); // なし
+			add(0); // なし
+			add(0); // なし
+			add(-1); // 1マス戻る
 			add(99); // ゴールに到着する
 			add(-3); // 3マス戻る
 		}
@@ -65,6 +85,11 @@ public class GamePlay {
 			add(1); // 1マス戻る
 			add(1); // なし
 			add(2); // 次は2倍進む
+			add(1); // ２マス戻る
+			add(1); // なし
+			add(1); // なし
+			add(1); // 1マス戻る
+			add(1); // 2回休み
 			add(1); // ゴールに到着する
 			add(1); // 3マス戻る
 
@@ -75,6 +100,8 @@ public class GamePlay {
 	/*	スタートとゴールまでのマップのマス数
 	*/
 	private int squareNum = this.squareContentList.size();
+	//private int squereMapNum = rand.nextInt(30) + 20;
+	//private int squareNum = squereMapNum;
 
 	public void startUp() {
 		//ゲーム起動
@@ -91,24 +118,27 @@ public class GamePlay {
 			int selectedGameStart = 0;
 			// ゲーム開始選択値(1:開始/1以外:終了)
 			selectedGameStart = this.selectGameStart();
+			try {
+				if (selectedGameStart != 1) {
 
-			if (selectedGameStart != 1) {
+					//ゲーム終了
 
-				//ゲーム終了
+					this.printGameFinish();//ゲーム終了メソッドの呼び出し
 
-				this.printGameFinish();//ゲーム終了メソッドの呼び出し
+					isGameContinue = false; //ゲーム継続フラグ(false)
 
-				isGameContinue = false; //ゲーム継続フラグ(false)
+				}
+				//ゲーム開始(1)が入力された場合
+				else {
 
-			}
-			//ゲーム開始(1)が入力された場合
-			else {
+					//ゲームプレイ処理
 
-				//ゲームプレイ処理
+					//ゴールに到達した場合はfalse(終了)、途中終了した場合はtrue(継続)
+					isGameContinue = this.playGame();
+				}
 
-				//ゴールに到達した場合はfalse(終了)、途中終了した場合はtrue(継続)
-				isGameContinue = this.playGame();
-
+			} catch (Exception e) {
+				;
 			}
 
 		}
@@ -131,6 +161,7 @@ public class GamePlay {
 		int currentPosition = 0; //現在位置のマス数(スタート地点を0とする)
 		int breakNum = 0; //行動休み回数
 		int moveMultiple = 1; // 移動倍率 
+		int count = 0; //ターン数
 
 		//マップの初期表示
 
@@ -148,7 +179,7 @@ public class GamePlay {
 			//移動、終了選択
 
 			int selectedMoveOrStop = 0; // 移動終了選択値(1:移動／1以外:途中終了)
-			selectedMoveOrStop = this.selectMoveOrStop();
+			selectedMoveOrStop = this.selectMoveOrStop(currentPosition,count);
 
 			// 移動途中終了分岐
 
@@ -164,6 +195,7 @@ public class GamePlay {
 					this.printBreakTime();
 
 					breakNum -= 1; //休み回数から一回分引く
+					count++;
 					continue; //次のループへ
 
 				}
@@ -190,11 +222,11 @@ public class GamePlay {
 
 					//発生したイベント内容を出力
 
-					this.printEvent(this.squareContentList, currentPosition);
+					//this.printEvent(this.squareContentList, currentPosition);
 
 					//イベント効果を反映
 
-					//現在位置マス-1がリストのindexと対応
+					//現在位置マス-1がリストのindexと対応1
 
 					int listIndex = currentPosition - 1;
 
@@ -207,7 +239,9 @@ public class GamePlay {
 					//移動倍率
 
 					moveMultiple = this.moveMultipleList.get(listIndex);
-
+				
+					count++;
+					
 				}
 
 				//ゴール到達分岐
@@ -216,7 +250,7 @@ public class GamePlay {
 				if (currentPosition > this.squareNum) {
 					//プレイヤーの位置 > マス
 
-					this.printGameClear();
+					this.printGameClear(count);
 
 					isActionContinue = false; // 行動継続フラグ(false:終了)
 					isGameContinue = false; // ゲーム継続フラグ(false:終了)
@@ -229,7 +263,7 @@ public class GamePlay {
 					//マップを書く イベント発生後
 
 					this.printMap(this.squareContentList, currentPosition);
-
+					this.printEvent(this.squareContentList, currentPosition);
 				}
 
 			}
@@ -284,54 +318,170 @@ public class GamePlay {
 	 各マスにイベント内容を出力
 	*/
 
+	
 	private void printMap(List<String> contentList, int currentPos) {
-		//スタートを出力
+	//スタートを出力
 
-		System.out.println("スタート" + "\n" + "|");
+	System.out.println("スタート" + "\n" + "|");
 
-		//スタートからゴールまでのマスとイベント内容を出力する
-		for (int i = 0; i < contentList.size(); i++) {
-			int loopCnt = i + 1; //ループ回数目
-			String printSquare = ""; //1マス出力する内容
+	//スタートからゴールまでのマスとイベント内容を出力する
+	for (int i = 0; i <  contentList.size(); i++) {
+		int loopCnt = i + 1; //ループ回数目
+		String printSquare = ""; //1マス出力する内容
 
-			//マスの出力内容を分岐する
+		//マスの出力内容を分岐する
 
-			String squareKind = "〇"; //デフォルトのマスは〇で出力
+		String squareKind = "〇"; //デフォルトのマスは〇で出力
 
-			//ループ回数が現在位置のマス目と同じか？
+		//ループ回数が現在位置のマス目と同じか？
 
-			if (loopCnt == currentPos) {
-				squareKind += "●"; //現在位置のマスは●で出力する
+		if (loopCnt == currentPos) {
+			squareKind += "●"; //現在位置のマスは●で出力する
 
-			}
-
-			//イベント内容の出力
-			//イベント内容をリストから取得
-
-			String eventContent = contentList.get(i);
-
-			//各マスに出力する内容を生成
-			// 〇　イベント内容
-
-			printSquare += squareKind + "    " + eventContent;
-			printSquare += "\n" + "|";
-
-			System.out.println(printSquare);
 		}
 
-		//ゴールの出力
-		System.out.println("ゴール！");
+		//イベント内容の出力
+		//イベント内容をリストから取得
 
+		String eventContent = contentList.get(i);
+
+		//各マスに出力する内容を生成
+		// 〇　イベント内容
+		
+		
+		printSquare += squareKind + "    " + eventContent;
+		printSquare += "\n" + "|";
+
+		System.out.println(printSquare);
+		
 	}
 
-	public int selectMoveOrStop() {
+	//ゴールの出力
+	System.out.println("...");
+
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+//	private void printMap(List<String> contentList, int currentPos) {
+//		//スタートを出力
+//
+//		System.out.println("スタート" + "\n" + "|");
+//
+//		//スタートからゴールまでのマスとイベント内容を出力する
+//		for (int i = 0; i <  currentPos + 3; i++) {
+//			int loopCnt = i + 1; //ループ回数目
+//			String printSquare = ""; //1マス出力する内容
+//
+//			//マスの出力内容を分岐する
+//
+//			String squareKind = "〇"; //デフォルトのマスは〇で出力
+//
+//			//ループ回数が現在位置のマス目と同じか？
+//
+//			if (loopCnt == currentPos) {
+//				squareKind += "●"; //現在位置のマスは●で出力する
+//
+//			}
+//
+//			//イベント内容の出力
+//			//イベント内容をリストから取得
+//
+//			String eventContent = contentList.get(i);
+//
+//			//各マスに出力する内容を生成
+//			// 〇　イベント内容
+//			
+//			
+//			printSquare += squareKind + "    " + eventContent;
+//			printSquare += "\n" + "|";
+//
+//			System.out.println(printSquare);
+//			
+//		}
+//
+//		//ゴールの出力
+//		System.out.println("...");
+//
+//	}
+//	
+//	
+//	private void printMap2(List<String> contentList, int currentPos) {
+//		//スタートを出力
+//
+//		System.out.println("現在地" + "\n" + "|");
+//
+//		//現在地から５コマ先までのマスとイベント内容を出力する
+//		
+//		for (int i = 0;  i <  currentPos +3; i++) {
+//			int loopCnt = i + 1; //ループ回数目
+//			String printSquare = ""; //1マス出力する内容
+//
+//			//マスの出力内容を分岐する
+//
+//			String squareKind = "〇"; //デフォルトのマスは〇で出力
+//
+//			//ループ回数が現在位置のマス目と同じか？
+//			if(currentPos > i) {
+//				if (loopCnt == currentPos) {
+//					squareKind += "●"; //現在位置のマスは●で出力する
+//
+//				}
+//
+//			}else if(currentPos < i){
+//				
+//				continue;
+//			
+//				
+//			}
+//			
+//			
+//			
+//			//イベント内容の出力
+//			//イベント内容をリストから取得
+//
+//			String eventContent = contentList.get(i);
+//
+//			//各マスに出力する内容を生成
+//			// 〇　イベント内容
+//			
+//			
+//			printSquare += squareKind + "    " + eventContent;
+//			printSquare += "\n" + "|";
+//
+//			System.out.println(printSquare);
+//			
+//				
+//			
+//		
+//		
+//			
+//		}//System.out.println("ゴール!");
+//		
+//		
+//		
+//
+//	}
+
+	public int selectMoveOrStop(int c, int t) {
 		//選択要求メッセージ
 		String requestMsg = "";
 		requestMsg = ""
 				+ "\n"
 				+ "\n" + "★ キーボードから以下の数値を入力してください。"
+				+ "\n" + "残りマス数: " + (squareNum - c)
+				+ "\n" + "ターン数: "+ t
 				+ "\n" + "  ［1］：移動する。"
-				+ "\n" + "  ［9］：ゲームを途中で終了して、開始画面に戻る。"
+				+ "\n" + "  ［1以外］：ゲームを途中で終了して、開始画面に戻る。"
 				+ "\n";
 
 		System.out.println(requestMsg);
@@ -372,7 +522,7 @@ public class GamePlay {
 		return val;
 	}
 
-	public void printGameClear() {
+	public void printGameClear(int t) {
 		//ゲームクリアメッセージ
 		String printMsg = ""
 				+ "\n"
@@ -380,6 +530,8 @@ public class GamePlay {
 				+ "\n" + ""
 				+ "\n" + " おめでとうございます！"
 				+ "\n" + " ゲームをクリアしました！！"
+				+ "\n" + ""
+				+ "\n" + " ターン数: " + t 
 				+ "\n" + ""
 				+ "\n" + "★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★"
 				+ "\n";
