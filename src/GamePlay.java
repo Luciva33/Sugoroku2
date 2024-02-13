@@ -96,11 +96,9 @@ public class GamePlay {
 
 	};
 
-	/*	スタートとゴールまでのマップのマス数
-	*/
+	//	スタートとゴールまでのマップのマス数
+	
 	private int squareNum = this.squareContentList.size();
-	//private int squereMapNum = rand.nextInt(30) + 20;
-	//private int squareNum = squereMapNum;
 
 	public void startUp() {
 		//ゲーム起動
@@ -539,7 +537,7 @@ public class GamePlay {
 
 			String data = "クリアまでのターン数:" + Integer.toString(save);
 
-			fw.write(data); //基本型
+			fw.write(data); 
 			fw.close();
 
 		} catch (Exception e) {
