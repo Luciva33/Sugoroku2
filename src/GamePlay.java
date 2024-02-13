@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -7,10 +10,6 @@ public class GamePlay {
 	Random rand = new Random();
 
 	//メンバ変数を追加
-	
-	
-	
-	
 
 	private List<String> squareContentList = new ArrayList<String>() {
 		{
@@ -47,7 +46,7 @@ public class GamePlay {
 			add(0); // 10マス目：なし
 			add(0); // 11マス目：なし
 			add(0); // 12マス目: 1マス戻る
-			add(2); // 13マス目：1回休み
+			add(2); // 13マス目：2回休み
 			add(0); // 14マス目：ゴールに到着する
 			add(0); // 15マス目：3マス戻る	
 		}
@@ -67,8 +66,8 @@ public class GamePlay {
 			add(-2);//	2マスもどる
 			add(0); // なし
 			add(0); // なし
-			add(0); // なし
-			add(-1); // 1マス戻る
+			add(-1); // なし
+			add(0); // 1マス戻る
 			add(99); // ゴールに到着する
 			add(-3); // 3マス戻る
 		}
@@ -179,12 +178,12 @@ public class GamePlay {
 			//移動、終了選択
 
 			int selectedMoveOrStop = 0; // 移動終了選択値(1:移動／1以外:途中終了)
-			selectedMoveOrStop = this.selectMoveOrStop(currentPosition,count);
+			selectedMoveOrStop = this.selectMoveOrStop(currentPosition, count);
 
 			// 移動途中終了分岐
 
 			if (selectedMoveOrStop != 1) {
-				break; //行動ループから抜ける // ここでロードファイルできるようにしたい	
+				break; //行動ループから抜ける 
 
 			} else {
 
@@ -212,9 +211,10 @@ public class GamePlay {
 				//マップを書く　移動後
 
 				this.printMap2(this.squareContentList, currentPosition);
+				this.printMoveValue(moveValue);
 
 				//イベント発生1
-				
+
 				this.printEvent(this.squareContentList, currentPosition);
 
 				//現在位置マス数がゴールまでのマス数より大きい場合は
@@ -241,9 +241,9 @@ public class GamePlay {
 					//移動倍率
 
 					moveMultiple = this.moveMultipleList.get(listIndex);
-				
+
 					count++;
-					
+
 				}
 
 				//ゴール到達分岐
@@ -265,7 +265,7 @@ public class GamePlay {
 					//マップを書く イベント発生後
 
 					this.printMap2(this.squareContentList, currentPosition);
-				
+
 				}
 
 			}
@@ -292,6 +292,9 @@ public class GamePlay {
 				+ "\n";
 
 		System.out.println(requestMsg);
+		//	クリアまでの最速ターン数表示
+		//load();
+		System.out.println(load());
 
 		//コンソールから入力値を受け取る
 		Scanner sc = new Scanner(System.in);
@@ -320,49 +323,47 @@ public class GamePlay {
 	 各マスにイベント内容を出力
 	*/
 
-	
 	private void printMap(List<String> contentList, int currentPos) {
-	//スタートを出力
+		//スタートを出力
 
-	System.out.println("スタート" + "\n" + "|");
+		System.out.println("スタート" + "\n" + "|");
 
-	//スタートからゴールまでのマスとイベント内容を出力する
-	for (int i = 0; i <  contentList.size(); i++) {
-		int loopCnt = i + 1; //ループ回数目
-		String printSquare = ""; //1マス出力する内容
+		//スタートからゴールまでのマスとイベント内容を出力する
+		for (int i = 0; i < contentList.size(); i++) {
+			int loopCnt = i + 1; //ループ回数目
+			String printSquare = ""; //1マス出力する内容
 
-		//マスの出力内容を分岐する
+			//マスの出力内容を分岐する
 
-		String squareKind = "〇"; //デフォルトのマスは〇で出力
+			String squareKind = "〇"; //デフォルトのマスは〇で出力
 
-		//ループ回数が現在位置のマス目と同じか？
+			//ループ回数が現在位置のマス目と同じか？
 
-		if (loopCnt == currentPos) {
-			squareKind += "●"; //現在位置のマスは●で出力する
+			if (loopCnt == currentPos) {
+				squareKind += "●"; //現在位置のマスは●で出力する
+
+			}
+
+			//イベント内容の出力
+			//イベント内容をリストから取得
+
+			String eventContent = contentList.get(i);
+
+			//各マスに出力する内容を生成1
+
+			// 〇　イベント内容
+
+			printSquare += squareKind + "    " + eventContent;
+			printSquare += "\n" + "|";
+
+			System.out.println(printSquare);
 
 		}
 
-		//イベント内容の出力
-		//イベント内容をリストから取得
+		//ゴールの出力
+		System.out.println("...");
 
-		String eventContent = contentList.get(i);
-
-		//各マスに出力する内容を生成
-		// 〇　イベント内容
-		
-		
-		printSquare += squareKind + "    " + eventContent;
-		printSquare += "\n" + "|";
-
-		System.out.println(printSquare);
-		
 	}
-
-	//ゴールの出力
-	System.out.println("...");
-
-}
-	
 
 	public int selectMoveOrStop(int c, int t) {
 		//選択要求メッセージ
@@ -371,7 +372,7 @@ public class GamePlay {
 				+ "\n"
 				+ "\n" + "★ キーボードから以下の数値を入力してください。"
 				+ "\n" + "残りマス数: " + (squareNum - c)
-				+ "\n" + "ターン数: "+ t
+				+ "\n" + "ターン数: " + t
 				+ "\n" + "  ［1］：移動する。"
 				+ "\n" + "  ［1以外］：ゲームを途中で終了して、開始画面に戻る。"
 				+ "\n";
@@ -414,6 +415,12 @@ public class GamePlay {
 		return val;
 	}
 
+	//移動マスの表示
+
+	private void printMoveValue(int moveValue) {
+		System.out.printf("\n%dマス進んだ!\n", moveValue);
+	}
+
 	public void printGameClear(int t) {
 		//ゲームクリアメッセージ
 		String printMsg = ""
@@ -423,12 +430,13 @@ public class GamePlay {
 				+ "\n" + " おめでとうございます！"
 				+ "\n" + " ゲームをクリアしました！！"
 				+ "\n" + ""
-				+ "\n" + " ターン数: " + t 
+				+ "\n" + " ターン数: " + t
 				+ "\n" + ""
 				+ "\n" + "★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★ ★"
 				+ "\n";
 
 		System.out.println(printMsg);
+		save(t); //ターン数の記録
 	}
 
 	private void printBreakTime() {
@@ -469,59 +477,92 @@ public class GamePlay {
 
 		System.out.println(printEvent);
 	}
-	
+
 	private void printMap2(List<String> contentList, int currentPos) {
-	//スタートを出力
+		//スタートを出力
+		if (currentPos < 4) {
+			System.out.println("スタート" + "\n" + "|");
+		} else {
+			System.out.println("..." + "\n" + "|");
+		}
+		//スタートからゴールまでのマスとイベント内容を出力する
 
-	System.out.println("現在地" + "\n" + "|");
-
-	//スタートからゴールまでのマスとイベント内容を出力する
-	
-	//if(currentPos +3 <  contentList.size() ) {
-		int start = currentPos - 3 <=0?0:currentPos-3; 
-		int last = currentPos + 3 >= contentList.size()?contentList.size():currentPos+3; 
-		for (int i = start ; i <  last ; i++) {
+		int start = currentPos - 3 <= 0 ? 0 : currentPos - 3;
+		int last = currentPos + 3 >= contentList.size() ? contentList.size() : currentPos + 3;
+		for (int i = start; i < last; i++) {
 			int loopCnt = i + 1; //ループ回数目
 			String printSquare = ""; //1マス出力する内容
-	
+
 			//マスの出力内容を分岐する
-	
+
 			String squareKind = "〇"; //デフォルトのマスは〇で出力
-	
+
 			//ループ回数が現在位置のマス目と同じか？
-	
+
 			if (loopCnt == currentPos) {
 				squareKind += "●"; //現在位置のマスは●で出力する
-			
+
 			}
-		
+
 			//イベント内容の出力
 			//イベント内容をリストから取得
-	
+
 			String eventContent = contentList.get(i);
-	
+
 			//各マスに出力する内容を生成
 			// 〇　イベント内容
-			
-			
+
 			printSquare += squareKind + "    " + eventContent;
 			printSquare += "\n" + "|";
-	
+
 			System.out.println(printSquare);
-		}		
-			
-	//}else{
-		
-		
-	//}
+		}
 
-	//ゴールの出力
-	System.out.println("...");
+		//ゴールの出力
 
-}
-	
-	
-	
-	
+		if (currentPos < squareContentList.size() - 4) {
+			System.out.println("...");
+			;
+		} else {
+			System.out.println("ゴール!");
+		}
+
+	}
+
+	//ターン数のセーブ
+
+	public static void save(int save) {
+
+		try (FileWriter fw = new FileWriter("savedata/save.txt")) {
+
+			//読み込んだデータの処理
+
+			String data = "クリアまでのターン数:" + Integer.toString(save);
+
+			fw.write(data); //基本型
+			fw.close();
+
+		} catch (Exception e) {
+			System.out.println("例外発生しました");
+		}
+
+	}
+
+	//ターン数のロード
+
+	public static String load() {
+
+		String path = "savedata/save.txt";
+		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+
+			String loaddata = br.readLine();
+			path = loaddata;
+
+		} catch (Exception e) {
+			;
+
+		}
+		return path;
+	}
 
 }
