@@ -493,7 +493,7 @@ public class GamePlay {
 
 			//読み込んだデータの処理
 
-			String data = "クリアまでのターン数:" + Integer.toString(save);
+			String data = "クリアまでかかったターン数:" + Integer.toString(save);
 
 			fw.write(data);
 			fw.close();
